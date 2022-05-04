@@ -6,7 +6,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -24,29 +23,30 @@ public class Inventory extends Application {
 
     // Additional class Variables
     // Part text fields
-    static RadioButton inHouseRadio;
-    static RadioButton outSourcedRadio;
-    static Text partText;
     static ToggleGroup tg = new ToggleGroup();
-    static TextField partId = new TextField();
-    static TextField partName = new TextField();
-    static TextField partInv = new TextField();
-    static TextField partPrice = new TextField();
-    static TextField partMax = new TextField();
-    static TextField partMin = new TextField();
-    static TextField inOrOutPart = new TextField();
+    @FXML private Text partTitle;
+    @FXML private RadioButton partInHouse;
+    @FXML private RadioButton partOutsourced;
+    @FXML private Text partText;
+    @FXML private TextField partId;
+    @FXML private TextField partName;
+    @FXML private TextField partInv;
+    @FXML private TextField partPrice;
+    @FXML private TextField partMax;
+    @FXML private TextField partMin;
+    @FXML private TextField inOrOutPart;
 
     // Main window variables
     @FXML private TableView<Part> partsTable;
     @FXML private TableView<Product> productsTable;
     @FXML private TableColumn<Part, Integer> partIdColumn;
-    @FXML private TableColumn<Part, Integer> partNameColumn;
+    @FXML private TableColumn<Part, String> partNameColumn;
     @FXML private TableColumn<Part, Integer> partInvColumn;
-    @FXML private TableColumn<Part, Integer> partPriceColumn;
+    @FXML private TableColumn<Part, Double> partPriceColumn;
     @FXML private TableColumn<Product, Integer> productIdColumn;
-    @FXML private TableColumn<Product, Integer> productNameColumn;
+    @FXML private TableColumn<Product, String> productNameColumn;
     @FXML private TableColumn<Product, Integer> productInvColumn;
-    @FXML private TableColumn<Product, Integer> productPriceColumn;
+    @FXML private TableColumn<Product, Double> productPriceColumn;
 
     // Window functions
     // Main window function
@@ -60,26 +60,23 @@ public class Inventory extends Application {
 
         // Populate the tables
         // Parts Table
-
+        //partIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        //partNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        //partInvColumn.setCellValueFactory(new PropertyValueFactory<>("stock"));
+        //partPriceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
+//
+        //partsTable.getItems().setAll(allParts);
 
         stage.setScene(scene);
         stage.show();
     }
 
     // Create the addPart Window
-    public static void addPartWindow() throws IOException {
+    public void addPartWindow() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Inventory.class.getResource("AddPart.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 600, 650);
         Stage addPartStage = new Stage();
         addPartStage.setTitle("Add Part");
-
-        // setup the input fields
-        partName = (TextField) scene.lookup("#partName");
-        partInv = (TextField) scene.lookup("#partInv");
-        partPrice = (TextField) scene.lookup("#partPrice");
-        partMax = (TextField) scene.lookup("#partMax");
-        partMin = (TextField) scene.lookup("#partMin");
-        inOrOutPart = (TextField) scene.lookup("#partMachineId");
 
         // Assign the button values
         radioToggle(scene);
@@ -90,23 +87,14 @@ public class Inventory extends Application {
     }
 
     // Modify the addPart Window
-    public static void modifyPartWindow() throws IOException {
+    public void modifyPartWindow() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Inventory.class.getResource("AddPart.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 600, 650);
         Stage modifyPartStage = new Stage();
 
         // Change text
         modifyPartStage.setTitle("Modify Part");
-        Text partTitle = (Text) scene.lookup("#partTitle");
         partTitle.setText("Modify Part");
-
-        // setup the input fields
-        partName = (TextField) scene.lookup("#partName");
-        partInv = (TextField) scene.lookup("#partInv");
-        partPrice = (TextField) scene.lookup("#partPrice");
-        partMax = (TextField) scene.lookup("#partMax");
-        partMin = (TextField) scene.lookup("#partMin");
-        inOrOutPart = (TextField) scene.lookup("#partMachineId");
 
         // Assign the button values
         radioToggle(scene);
@@ -117,7 +105,7 @@ public class Inventory extends Application {
     }
 
     // Create the addProduct Window
-    public static void addProductWindow() throws IOException {
+    public void addProductWindow() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Inventory.class.getResource("AddProduct.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 950, 615);
         Stage addPartStage = new Stage();
@@ -127,7 +115,7 @@ public class Inventory extends Application {
     }
 
     // Modify the addProduct Window
-    public static void modifyProductWindow() throws IOException {
+    public void modifyProductWindow() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Inventory.class.getResource("AddProduct.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 950, 615);
         Stage modifyPartStage = new Stage();
@@ -144,25 +132,25 @@ public class Inventory extends Application {
 
     // Additional Functions
     // Set Radio button actions
-    public static void radioToggle(Scene scene) {
+    public void radioToggle(Scene scene) {
         // Pull the buttons from the scene and FXML
-        inHouseRadio = (RadioButton) scene.lookup("#partInHouse");
-        outSourcedRadio = (RadioButton) scene.lookup("#partOutsourced");
+        partInHouse = (RadioButton) scene.lookup("#partInHouse");
+        partOutsourced = (RadioButton) scene.lookup("#partOutsourced");
         partText = (Text) scene.lookup("#source");
 
         // Add buttons to toggle group
-        inHouseRadio.setToggleGroup(tg);
-        outSourcedRadio.setToggleGroup(tg);
+        partInHouse.setToggleGroup(tg);
+        partOutsourced.setToggleGroup(tg);
 
         // Create the listener
         tg.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> ov, Toggle t1, Toggle t2) {
                 // Button value
-                if (ov.getValue() == outSourcedRadio) {
+                if (ov.getValue() == partOutsourced) {
                     partText.setText("Company Name");
                 }
-                else if (ov.getValue() == inHouseRadio) {
+                else if (ov.getValue() == partInHouse) {
                     partText.setText("Machine ID");
                 }
             }
@@ -285,76 +273,70 @@ public class Inventory extends Application {
 
     // Add Part Save Button
     @FXML
-    protected void onAddPartSaveClick(ActionEvent event) {
+    protected void onPartSaveClick(ActionEvent event) {
         // Declare the variables
         Part newPart;
 
         // Create the new part
-        if (outSourcedRadio.isArmed()) {
-            newPart = new Outsourced((allParts.size() + 1),
-                    partName.getText(),
-                    Double.parseDouble(partPrice.getText()),
-                    Integer.parseInt(partInv.getText()),
-                    Integer.parseInt(partMin.getText()),
-                    Integer.parseInt(partMax.getText()),
-                    inOrOutPart.getText()
-            );
+        if (partTitle.getText().equals("Add Part")) {
+            if (partOutsourced.isArmed()) {
+                newPart = new Outsourced((allParts.size() + 1),
+                        partName.getText(),
+                        Double.parseDouble(partPrice.getText()),
+                        Integer.parseInt(partInv.getText()),
+                        Integer.parseInt(partMin.getText()),
+                        Integer.parseInt(partMax.getText()),
+                        inOrOutPart.getText()
+                );
+            }
+            else {
+                newPart = new InHouse((allParts.size() + 1),
+                        partName.getText(),
+                        Double.parseDouble(partPrice.getText()),
+                        Integer.parseInt(partInv.getText()),
+                        Integer.parseInt(partMin.getText()),
+                        Integer.parseInt(partMax.getText()),
+                        Integer.parseInt(inOrOutPart.getText())
+                );
+            }
+
+            // Add to the list
+            addPart(newPart);
         }
         else {
-            newPart = new InHouse((allParts.size() + 1),
-                    partName.getText(),
-                    Double.parseDouble(partPrice.getText()),
-                    Integer.parseInt(partInv.getText()),
-                    Integer.parseInt(partMin.getText()),
-                    Integer.parseInt(partMax.getText()),
-                    Integer.parseInt(inOrOutPart.getText())
-            );
+            // Create the new part
+            if (partOutsourced.isArmed()) {
+                newPart = new Outsourced((allParts.size() + 1),
+                        partName.getText(),
+                        Double.parseDouble(partPrice.getText()),
+                        Integer.parseInt(partInv.getText()),
+                        Integer.parseInt(partMin.getText()),
+                        Integer.parseInt(partMax.getText()),
+                        inOrOutPart.getText()
+                );
+            }
+            else {
+                newPart = new InHouse((allParts.size() + 1),
+                        partName.getText(),
+                        Double.parseDouble(partPrice.getText()),
+                        Integer.parseInt(partInv.getText()),
+                        Integer.parseInt(partMin.getText()),
+                        Integer.parseInt(partMax.getText()),
+                        Integer.parseInt(inOrOutPart.getText())
+                );
+            }
+
+            // Add to the list
+            updatePart(Integer.parseInt(partId.getText()), newPart);
         }
 
-        // Add to the list
-        addPart(newPart);
 
         // Close the stuff
         Node node = (Node) event.getSource();
         Stage active = (Stage) node.getScene().getWindow();
 
-        active.close();
-    }
-
-    // Add Modify Part Save Button
-    @FXML
-    protected void onModifyPartSaveClick(ActionEvent event) {
-        // Declare the variables
-        Part updatedPart;
-
-        // Create the new part
-        if (outSourcedRadio.isArmed()) {
-            updatedPart = new Outsourced((allParts.size() + 1),
-                    partName.getText(),
-                    Double.parseDouble(partPrice.getText()),
-                    Integer.parseInt(partInv.getText()),
-                    Integer.parseInt(partMin.getText()),
-                    Integer.parseInt(partMax.getText()),
-                    inOrOutPart.getText()
-            );
-        }
-        else {
-            updatedPart = new InHouse((allParts.size() + 1),
-                    partName.getText(),
-                    Double.parseDouble(partPrice.getText()),
-                    Integer.parseInt(partInv.getText()),
-                    Integer.parseInt(partMin.getText()),
-                    Integer.parseInt(partMax.getText()),
-                    Integer.parseInt(inOrOutPart.getText())
-            );
-        }
-
-        // Add to the list
-        updatePart(Integer.parseInt(partId.getText()), updatedPart);
-
-        // Close the stuff
-        Node node = (Node) event.getSource();
-        Stage active = (Stage) node.getScene().getWindow();
+        // update the table view
+        partsTable.refresh();
 
         active.close();
     }

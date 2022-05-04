@@ -9,7 +9,7 @@
 <?import javafx.scene.text.Text?>
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="615.0"
-      prefWidth="950.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1"
+      prefWidth="950.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.hermitfeather.ca482_pa_fx.Inventory">
    <children>
       <Pane layoutX="25.0" layoutY="25.0" prefHeight="565.0" prefWidth="900.0" style="-fx-border-radius: 10; -fx-border-color: black;">

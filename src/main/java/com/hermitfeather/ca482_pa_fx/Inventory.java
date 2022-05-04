@@ -23,12 +23,11 @@ public class Inventory extends Application {
     private static ObservableList<Product> allProducts; // Keep broken so you can do the javadoc with a runtime error
 
     // Additional class Variables
+    // Part text fields
     static RadioButton inHouseRadio;
     static RadioButton outSourcedRadio;
     static Text partText;
     static ToggleGroup tg = new ToggleGroup();
-
-    // Part text fields
     static TextField partId = new TextField();
     static TextField partName = new TextField();
     static TextField partInv = new TextField();
@@ -36,6 +35,18 @@ public class Inventory extends Application {
     static TextField partMax = new TextField();
     static TextField partMin = new TextField();
     static TextField inOrOutPart = new TextField();
+
+    // Main window variables
+    @FXML private TableView<Part> partsTable;
+    @FXML private TableView<Product> productsTable;
+    @FXML private TableColumn<Part, Integer> partIdColumn;
+    @FXML private TableColumn<Part, Integer> partNameColumn;
+    @FXML private TableColumn<Part, Integer> partInvColumn;
+    @FXML private TableColumn<Part, Integer> partPriceColumn;
+    @FXML private TableColumn<Product, Integer> productIdColumn;
+    @FXML private TableColumn<Product, Integer> productNameColumn;
+    @FXML private TableColumn<Product, Integer> productInvColumn;
+    @FXML private TableColumn<Product, Integer> productPriceColumn;
 
     // Window functions
     // Main window function
@@ -46,6 +57,10 @@ public class Inventory extends Application {
 
         // Change some stuff
         stage.setTitle("Inventory");
+
+        // Populate the tables
+        // Parts Table
+
 
         stage.setScene(scene);
         stage.show();

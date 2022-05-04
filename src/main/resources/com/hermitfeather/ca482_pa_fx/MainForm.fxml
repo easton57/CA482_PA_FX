@@ -21,10 +21,10 @@
             <Text id="bold-text" layoutX="29.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Parts" />
             <TableView id="partsTable" layoutX="14.0" layoutY="36.0" prefHeight="138.0" prefWidth="397.0">
               <columns>
-                <TableColumn prefWidth="75.0" text="Part ID" />
-                <TableColumn prefWidth="87.0" text="Part Name" />
-                  <TableColumn prefWidth="107.0" text="Inventory Level" />
-                  <TableColumn prefWidth="127.0" text="Price/Cost Per Unit" />
+                <TableColumn id="partIdColumn" prefWidth="75.0" text="Part ID" />
+                <TableColumn id="partNameColumn" prefWidth="87.0" text="Part Name" />
+                <TableColumn id="partInvColumn" prefWidth="107.0" text="Inventory Level" />
+                <TableColumn id="partPriceColumn" prefWidth="127.0" text="Price/Cost Per Unit" />
               </columns>
             </TableView>
             <TextField id="searchPart" layoutX="265.0" layoutY="10.0" prefHeight="25.0" prefWidth="146.0" promptText="Search by Part ID or Name" />
@@ -43,10 +43,10 @@
             <Text id="bold-text" layoutX="29.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Products" />
             <TableView id="productsTable" layoutX="14.0" layoutY="36.0" prefHeight="138.0" prefWidth="397.0">
                <columns>
-                  <TableColumn prefWidth="75.0" text="Product ID" />
-                  <TableColumn prefWidth="87.0" text="Product Name" />
-                  <TableColumn prefWidth="107.0" text="Inventory Level" />
-                  <TableColumn prefWidth="127.0" text="Price/Cost Per Unit" />
+                  <TableColumn id="productIdColumn" prefWidth="75.0" text="Product ID" />
+                  <TableColumn id="productNameColumn" prefWidth="87.0" text="Product Name" />
+                  <TableColumn id="productInvColumn" prefWidth="107.0" text="Inventory Level" />
+                  <TableColumn id="productPriceColumn" prefWidth="127.0" text="Price/Cost Per Unit" />
                </columns>
             </TableView>
             <TextField id="searchProduct" layoutX="265.0" layoutY="10.0" prefHeight="25.0" prefWidth="146.0" promptText="Search by Part ID or Name" />

@@ -10,7 +10,7 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="615.0"
       prefWidth="950.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.hermitfeather.ca482_pa_fx.Inventory">
+      fx:controller="com.hermitfeather.ca482_pa_fx.ProductController">
    <children>
       <Pane layoutX="25.0" layoutY="25.0" prefHeight="565.0" prefWidth="900.0" style="-fx-border-radius: 10; -fx-border-color: black;">
          <children>
@@ -31,26 +31,26 @@
             <TextField id="productMax" layoutX="149.0" layoutY="263.0" prefHeight="25.0" prefWidth="89.0" />
             <Text layoutX="255.0" layoutY="280.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Min" />
             <TextField id="productMin" layoutX="285.0" layoutY="263.0" prefHeight="25.0" prefWidth="89.0" />
-            <TextField id="productSearch" layoutX="696.0" layoutY="31.0" prefHeight="25.0" prefWidth="173.0" promptText="Search by Part ID or Name" />
-            <TableView layoutX="486.0" layoutY="74.0" prefHeight="173.0" prefWidth="383.0">
+            <TextField fx:id="productSearch" layoutX="696.0" layoutY="31.0" prefHeight="25.0" prefWidth="173.0" promptText="Search by Part ID or Name" />
+            <TableView fx:id="existingParts" layoutX="486.0" layoutY="74.0" prefHeight="173.0" prefWidth="383.0">
                <columns>
-                  <TableColumn prefWidth="75.0" text="Product ID" />
-                  <TableColumn prefWidth="87.0" text="Product Name" />
-                  <TableColumn prefWidth="107.0" text="Inventory Level" />
-                  <TableColumn prefWidth="127.0" text="Price/Cost Per Unit" />
+                  <TableColumn fx:id="existingPartId" prefWidth="75.0" text="Part ID" />
+                  <TableColumn fx:id="existingPartName" prefWidth="87.0" text="Part Name" />
+                  <TableColumn fx:id="existingPartInv" prefWidth="107.0" text="Inventory Level" />
+                  <TableColumn fx:id="existingPartPrice" prefWidth="127.0" text="Price/Cost Per Unit" />
                </columns>
             </TableView>
-            <TableView layoutX="486.0" layoutY="304.0" prefHeight="173.0" prefWidth="383.0">
+            <TableView fx:id="implementedParts" layoutX="486.0" layoutY="304.0" prefHeight="173.0" prefWidth="383.0">
                <columns>
-                  <TableColumn prefWidth="75.0" text="Product ID" />
-                  <TableColumn prefWidth="87.0" text="Product Name" />
-                  <TableColumn prefWidth="107.0" text="Inventory Level" />
-                  <TableColumn prefWidth="127.0" text="Price/Cost Per Unit" />
+                  <TableColumn fx:id="implementedPartId" prefWidth="75.0" text="Part ID" />
+                  <TableColumn fx:id="implementedPartName" prefWidth="87.0" text="Part Name" />
+                  <TableColumn fx:id="implementedPartInv" prefWidth="107.0" text="Inventory Level" />
+                  <TableColumn fx:id="implementedPartPrice" prefWidth="127.0" text="Price/Cost Per Unit" />
                </columns>
             </TableView>
-            <Button layoutX="764.0" layoutY="263.0" mnemonicParsing="false" text="Add" />
-            <Button layoutX="692.0" layoutY="491.0" mnemonicParsing="false" text="Remove Associated Part" />
-            <Button layoutX="692.0" layoutY="526.0" mnemonicParsing="false" text="Save" />
+            <Button layoutX="764.0" layoutY="263.0" mnemonicParsing="false" text="Add" onAction="#onPartAddButtonClick"/>
+            <Button layoutX="692.0" layoutY="491.0" mnemonicParsing="false" text="Remove Associated Part" onAction="#onRemovePartButtonClick"/>
+            <Button layoutX="692.0" layoutY="526.0" mnemonicParsing="false" text="Save" onAction="#onProductSaveClick"/>
             <Button layoutX="783.0" layoutY="526.0" mnemonicParsing="false" text="Cancel" onAction="#hideWindow"/>
          </children>
       </Pane>

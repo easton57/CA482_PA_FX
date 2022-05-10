@@ -2,41 +2,33 @@ package com.hermitfeather.ca482_pa_fx;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
+import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.text.Text;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
-public class Inventory extends Application {
+public class Inventory extends Application implements Initializable {
     // Define Class Vars
     private static ObservableList<Part> allParts = FXCollections.observableArrayList();
-    private static ObservableList<Product> allProducts; // Keep broken so you can do the javadoc with a runtime error
-
-    // Additional class Variables
-    // Part text fields
-    static ToggleGroup tg = new ToggleGroup();
-    @FXML private Text partTitle;
-    @FXML private RadioButton partInHouse;
-    @FXML private RadioButton partOutsourced;
-    @FXML private Text partText;
-    @FXML private TextField partId;
-    @FXML private TextField partName;
-    @FXML private TextField partInv;
-    @FXML private TextField partPrice;
-    @FXML private TextField partMax;
-    @FXML private TextField partMin;
-    @FXML private TextField inOrOutPart;
+    private static ObservableList<Product> allProducts = FXCollections.observableArrayList();
 
     // Main window variables
+    @FXML private Button addProductButton;
+    @FXML private TextField searchPart;
+    @FXML private TextField searchProduct;
     @FXML private TableView<Part> partsTable;
     @FXML private TableView<Product> productsTable;
     @FXML private TableColumn<Part, Integer> partIdColumn;
@@ -58,103 +50,93 @@ public class Inventory extends Application {
         // Change some stuff
         stage.setTitle("Inventory");
 
-        // Populate the tables
-        // Parts Table
-        //partIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        //partNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        //partInvColumn.setCellValueFactory(new PropertyValueFactory<>("stock"));
-        //partPriceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
-//
-        //partsTable.getItems().setAll(allParts);
-
         stage.setScene(scene);
         stage.show();
     }
 
-    // Create the addPart Window
-    public void addPartWindow() throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Inventory.class.getResource("AddPart.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 600, 650);
-        Stage addPartStage = new Stage();
-        addPartStage.setTitle("Add Part");
+    @Override
+    public void initialize(URL Location, ResourceBundle resources) {
+        // Set up the table cell's
+        partIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        partNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        partInvColumn.setCellValueFactory(new PropertyValueFactory<>("stock"));
+        partPriceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
 
-        // Assign the button values
-        radioToggle(scene);
+        productIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        productNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        productInvColumn.setCellValueFactory(new PropertyValueFactory<>("stock"));
+        productPriceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
 
-        // Set the scene and open
-        addPartStage.setScene(scene);
-        addPartStage.show();
-    }
+        // ****************************
+        // Set up the part text view
+        // ****************************
+        FilteredList<Part> filteredPart = new FilteredList<>(allParts, p -> true);
 
-    // Modify the addPart Window
-    public void modifyPartWindow() throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Inventory.class.getResource("AddPart.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 600, 650);
-        Stage modifyPartStage = new Stage();
-
-        // Change text
-        modifyPartStage.setTitle("Modify Part");
-        partTitle.setText("Modify Part");
-
-        // Assign the button values
-        radioToggle(scene);
-
-        // Set the scene and open
-        modifyPartStage.setScene(scene);
-        modifyPartStage.show();
-    }
-
-    // Create the addProduct Window
-    public void addProductWindow() throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Inventory.class.getResource("AddProduct.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 950, 615);
-        Stage addPartStage = new Stage();
-        addPartStage.setTitle("Add Product");
-        addPartStage.setScene(scene);
-        addPartStage.show();
-    }
-
-    // Modify the addProduct Window
-    public void modifyProductWindow() throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Inventory.class.getResource("AddProduct.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 950, 615);
-        Stage modifyPartStage = new Stage();
-
-        // Change Text
-        modifyPartStage.setTitle("Modify Product");
-        Text productTitle = (Text) scene.lookup("#productTitle");
-        productTitle.setText("Modify Product");
-
-        // Set the scene and open
-        modifyPartStage.setScene(scene);
-        modifyPartStage.show();
-    }
-
-    // Additional Functions
-    // Set Radio button actions
-    public void radioToggle(Scene scene) {
-        // Pull the buttons from the scene and FXML
-        partInHouse = (RadioButton) scene.lookup("#partInHouse");
-        partOutsourced = (RadioButton) scene.lookup("#partOutsourced");
-        partText = (Text) scene.lookup("#source");
-
-        // Add buttons to toggle group
-        partInHouse.setToggleGroup(tg);
-        partOutsourced.setToggleGroup(tg);
-
-        // Create the listener
-        tg.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-            @Override
-            public void changed(ObservableValue<? extends Toggle> ov, Toggle t1, Toggle t2) {
-                // Button value
-                if (ov.getValue() == partOutsourced) {
-                    partText.setText("Company Name");
+        searchPart.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredPart.setPredicate(part -> {
+                // Keep the results the same if empty
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
                 }
-                else if (ov.getValue() == partInHouse) {
-                    partText.setText("Machine ID");
+
+                // compare part ID or part Name
+                String lowerCaseFilter = newValue.toLowerCase();
+
+                if (part.getName().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
                 }
-            }
+                else {
+                    try {
+                        if (part.getId() == Integer.parseInt(newValue)) {
+                            return true;
+                        }
+                    }
+                    catch (NumberFormatException e) {
+                        return false;
+                    }
+                }
+                return false;
+            });
         });
+
+        // Place the values
+        partsTable.setItems(filteredPart);
+
+        // ****************************
+        // Set up the product text view
+        // ****************************
+        FilteredList<Product> filteredProduct = new FilteredList<>(allProducts, p -> true);
+
+        searchProduct.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredProduct.setPredicate(product -> {
+                // Keep the results the same if empty
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+
+                // compare part ID or part Name
+                String lowerCaseFilter = newValue.toLowerCase();
+
+                if (product.getName().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                else {
+                    try {
+                        if (product.getId() == Integer.parseInt(newValue)) {
+                            return true;
+                        }
+                    }
+                    catch (NumberFormatException e) {
+                        return false;
+                    }
+                }
+
+                return false;
+            });
+        });
+
+        // Place the values
+        productsTable.setItems(filteredProduct);
     }
 
     // Specified in UML
@@ -215,129 +197,78 @@ public class Inventory extends Application {
         return allProducts;
     }
 
-    // FXML actions
-    // Open the addPart Window
+    public static void main(String args[]){
+        launch(args);
+    }
+
+    // Part Pane Buttons
     @FXML
-    protected void onAddPartButtonClick() {
+    protected void onAddPartClick() throws IOException { PartController.addPartWindow(); }
+
+    @FXML
+    protected void onModifyPartClick() throws IOException {
+        TablePosition pos = partsTable.getSelectionModel().getSelectedCells().get(0);
+        int row = pos.getRow();
+
+        Part oldPart = partsTable.getItems().get(row);
+
+        PartController.modifyPartWindow(oldPart);
+    }
+
+    @FXML
+    protected void onDeletePartClick() {
+        TablePosition pos = partsTable.getSelectionModel().getSelectedCells().get(0);
+        int row = pos.getRow();
+
+        Part oldPart = partsTable.getItems().get(row);
+
+        deletePart(oldPart);
+    };
+
+    // Product Pane Buttons
+    @FXML
+    protected void onAddProductClick() throws IOException { ProductController.addProductWindow(); }
+
+    @FXML
+    protected void onModifyProductClick() throws IOException {
         try {
-            addPartWindow();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            TablePosition pos = productsTable.getSelectionModel().getSelectedCells().get(0);
+            int row = pos.getRow();
+
+            Product oldProduct = productsTable.getItems().get(row);
+
+            ProductController.modifyProductWindow(oldProduct);
+        }
+        catch (Exception e) {
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setHeaderText("Error Modifying Product!");
+            errorAlert.setContentText("The product couldn't be modified or the table is empty!");
+            errorAlert.showAndWait();
         }
     }
 
-    // Open the modifyPart Window
     @FXML
-    protected void onModifyPartButtonClick() {
+    protected void onDeleteProductClick() {
         try {
-            modifyPartWindow();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+            TablePosition pos = productsTable.getSelectionModel().getSelectedCells().get(0);
+            int row = pos.getRow();
 
-    // Open the addPart Window
-    @FXML
-    protected void onAddProductButtonClick() {
-        try {
-            addProductWindow();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+            Product oldProduct = productsTable.getItems().get(row);
 
-    // Open the addPart Window
-    @FXML
-    protected void onModifyProductButtonClick() {
-        try {
-            modifyProductWindow();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            deleteProduct(oldProduct);
         }
-    }
+        catch (Exception e) {
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setHeaderText("Error Deleting Product!");
+            errorAlert.setContentText("The following error occurred when deleting the product: " + e);
+            errorAlert.showAndWait();
+        }
+    };
 
     // Close if exiting
     @FXML
     protected void onExitButtonClick() {
         Platform.exit();
     }
-
-    // Hide the popup window
-    @FXML
-    protected void hideWindow(ActionEvent event) {
-        Node node = (Node) event.getSource();
-        Stage active = (Stage) node.getScene().getWindow();
-
-        active.close();
-    }
-
-    // Add Part Save Button
-    @FXML
-    protected void onPartSaveClick(ActionEvent event) {
-        // Declare the variables
-        Part newPart;
-
-        // Create the new part
-        if (partTitle.getText().equals("Add Part")) {
-            if (partOutsourced.isArmed()) {
-                newPart = new Outsourced((allParts.size() + 1),
-                        partName.getText(),
-                        Double.parseDouble(partPrice.getText()),
-                        Integer.parseInt(partInv.getText()),
-                        Integer.parseInt(partMin.getText()),
-                        Integer.parseInt(partMax.getText()),
-                        inOrOutPart.getText()
-                );
-            }
-            else {
-                newPart = new InHouse((allParts.size() + 1),
-                        partName.getText(),
-                        Double.parseDouble(partPrice.getText()),
-                        Integer.parseInt(partInv.getText()),
-                        Integer.parseInt(partMin.getText()),
-                        Integer.parseInt(partMax.getText()),
-                        Integer.parseInt(inOrOutPart.getText())
-                );
-            }
-
-            // Add to the list
-            addPart(newPart);
-        }
-        else {
-            // Create the new part
-            if (partOutsourced.isArmed()) {
-                newPart = new Outsourced((allParts.size() + 1),
-                        partName.getText(),
-                        Double.parseDouble(partPrice.getText()),
-                        Integer.parseInt(partInv.getText()),
-                        Integer.parseInt(partMin.getText()),
-                        Integer.parseInt(partMax.getText()),
-                        inOrOutPart.getText()
-                );
-            }
-            else {
-                newPart = new InHouse((allParts.size() + 1),
-                        partName.getText(),
-                        Double.parseDouble(partPrice.getText()),
-                        Integer.parseInt(partInv.getText()),
-                        Integer.parseInt(partMin.getText()),
-                        Integer.parseInt(partMax.getText()),
-                        Integer.parseInt(inOrOutPart.getText())
-                );
-            }
-
-            // Add to the list
-            updatePart(Integer.parseInt(partId.getText()), newPart);
-        }
-
-
-        // Close the stuff
-        Node node = (Node) event.getSource();
-        Stage active = (Stage) node.getScene().getWindow();
-
-        // update the table view
-        partsTable.refresh();
-
-        active.close();
-    }
 }
+

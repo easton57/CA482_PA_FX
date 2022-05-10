@@ -130,7 +130,6 @@ public class Inventory extends Application implements Initializable {
                         return false;
                     }
                 }
-
                 return false;
             });
         });
@@ -217,12 +216,28 @@ public class Inventory extends Application implements Initializable {
 
     @FXML
     protected void onDeletePartClick() {
-        TablePosition pos = partsTable.getSelectionModel().getSelectedCells().get(0);
-        int row = pos.getRow();
+        try {
+            TablePosition pos = partsTable.getSelectionModel().getSelectedCells().get(0);
+            int row = pos.getRow();
 
-        Part oldPart = partsTable.getItems().get(row);
+            Part oldPart = partsTable.getItems().get(row);
 
-        deletePart(oldPart);
+            // Create the confirmation window
+            Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmation.setHeaderText("Confirm Delete");
+            confirmation.setContentText("Are you sure you'd like to delete the following part? " + oldPart.getName());
+            confirmation.showAndWait();
+
+            if (confirmation.getResult().getText().equals("OK")) {
+                deletePart(oldPart);
+            }
+        }
+        catch (Exception e){
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setHeaderText("Error Deleting Part!");
+            errorAlert.setContentText("The following error occurred when deleting the part: " + e);
+            errorAlert.showAndWait();
+        }
     };
 
     // Product Pane Buttons
@@ -255,7 +270,23 @@ public class Inventory extends Application implements Initializable {
 
             Product oldProduct = productsTable.getItems().get(row);
 
-            deleteProduct(oldProduct);
+            // Create the confirmation window
+            Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmation.setHeaderText("Confirm Delete");
+            confirmation.setContentText("Are you sure you'd like to delete the following product? " + oldProduct.getName());
+            confirmation.showAndWait();
+
+            if (confirmation.getResult().getText().equals("OK")) {
+                // Check to see if there are parts associated
+                if (oldProduct.getAllAssociatedParts().isEmpty()) {
+                    deleteProduct(oldProduct);
+                } else {
+                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                    errorAlert.setHeaderText("Error Deleting Product!");
+                    errorAlert.setContentText("The product still has parts associated. Please unassociated all parts before deleting.");
+                    errorAlert.showAndWait();
+                }
+            }
         }
         catch (Exception e) {
             Alert errorAlert = new Alert(Alert.AlertType.ERROR);

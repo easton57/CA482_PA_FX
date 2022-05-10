@@ -10,10 +10,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TablePosition;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -186,41 +183,51 @@ public class ProductController implements Initializable {
         // Id Iterate
         idIterate++;
 
-        // Create the new part
-        if (productTitle.getText().equals("Add Product")) {
-            newProduct = new Product(idIterate,
-                    productName.getText(),
-                    Double.parseDouble(productPrice.getText()),
-                    Integer.parseInt(productInv.getText()),
-                    Integer.parseInt(productMin.getText()),
-                    Integer.parseInt(productMax.getText()));
+        // Make sure the max is bigger than the min and inv is inbetween
+        if (Integer.parseInt(productMax.getText()) > Integer.parseInt(productInv.getText()) &&
+                Integer.parseInt(productInv.getText()) > Integer.parseInt(productMin.getText())) {
+            // Create the new part
+            if (productTitle.getText().equals("Add Product")) {
+                newProduct = new Product(idIterate,
+                        productName.getText(),
+                        Double.parseDouble(productPrice.getText()),
+                        Integer.parseInt(productInv.getText()),
+                        Integer.parseInt(productMin.getText()),
+                        Integer.parseInt(productMax.getText()));
 
-            // Add to the list
-            Inventory.addProduct(newProduct);
-        } else {
-            newProduct = new Product(Integer.parseInt(productId.getText()),
-                    productName.getText(),
-                    Double.parseDouble(productPrice.getText()),
-                    Integer.parseInt(productInv.getText()),
-                    Integer.parseInt(productMin.getText()),
-                    Integer.parseInt(productMax.getText()));
+                // Add to the list
+                Inventory.addProduct(newProduct);
+            } else {
+                newProduct = new Product(Integer.parseInt(productId.getText()),
+                        productName.getText(),
+                        Double.parseDouble(productPrice.getText()),
+                        Integer.parseInt(productInv.getText()),
+                        Integer.parseInt(productMin.getText()),
+                        Integer.parseInt(productMax.getText()));
 
-            // Add to the list
-            Inventory.updateProduct((Integer.parseInt(productId.getText()) - 1), newProduct);
+                // Add to the list
+                Inventory.updateProduct((Integer.parseInt(productId.getText()) - 1), newProduct);
+            }
+
+            // add the parts
+            for (int i = 0; i < tempList.size(); i++) {
+                newProduct.addAssociatedPart(tempList.get(i));
+            }
+
+            emptyTempList();
+
+            // Close the stuff
+            Node node = (Node) event.getSource();
+            Stage active = (Stage) node.getScene().getWindow();
+
+            active.close();
         }
-
-        // add the parts
-        for (int i = 0; i < tempList.size(); i++) {
-            newProduct.addAssociatedPart(tempList.get(i));
+        else {
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setHeaderText("Value Error!");
+            errorAlert.setContentText("Please verify that Max is greater than Min and Stock is between those.");
+            errorAlert.showAndWait();
         }
-
-        emptyTempList();
-
-        // Close the stuff
-        Node node = (Node) event.getSource();
-        Stage active = (Stage) node.getScene().getWindow();
-
-        active.close();
     }
 
     // Add Part button
@@ -244,6 +251,14 @@ public class ProductController implements Initializable {
 
         Part oldPart = implementedParts.getItems().get(row);
 
-        tempList.remove(oldPart);
+        // Create the confirmation window
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmation.setHeaderText("Confirm Removal");
+        confirmation.setContentText("Are you sure you'd like to remove the following part? " + oldPart.getName());
+        confirmation.showAndWait();
+
+        if (confirmation.getResult().getText().equals("OK")) {
+            tempList.remove(oldPart);
+        }
     }
 }

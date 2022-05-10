@@ -8,10 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -144,61 +141,71 @@ public class PartController {
         // Iterate ID
         idIterate += 1;
 
-        // Create the new part
-        if (partTitle.getText().equals("Add Part")) {
-            if (outSourcedRadio.isSelected()) {
-                newPart = new Outsourced(idIterate,
-                        partName.getText(),
-                        Double.parseDouble(partPrice.getText()),
-                        Integer.parseInt(partInv.getText()),
-                        Integer.parseInt(partMin.getText()),
-                        Integer.parseInt(partMax.getText()),
-                        inOrOutPart.getText()
-                );
-            } else {
-                newPart = new InHouse(idIterate,
-                        partName.getText(),
-                        Double.parseDouble(partPrice.getText()),
-                        Integer.parseInt(partInv.getText()),
-                        Integer.parseInt(partMin.getText()),
-                        Integer.parseInt(partMax.getText()),
-                        Integer.parseInt(inOrOutPart.getText())
-                );
-            }
-
-            // Add to the list
-            Inventory.addPart(newPart);
-        } else {
+        // Make sure the max is bigger than the min and inv is inbetween
+        if (Integer.parseInt(partMax.getText()) > Integer.parseInt(partInv.getText()) &&
+                Integer.parseInt(partInv.getText()) > Integer.parseInt(partMin.getText())) {
             // Create the new part
-            if (outSourcedRadio.isSelected()) {
-                newPart = new Outsourced(Integer.parseInt(partId.getText()),
-                        partName.getText(),
-                        Double.parseDouble(partPrice.getText()),
-                        Integer.parseInt(partInv.getText()),
-                        Integer.parseInt(partMin.getText()),
-                        Integer.parseInt(partMax.getText()),
-                        inOrOutPart.getText()
-                );
+            if (partTitle.getText().equals("Add Part")) {
+                if (outSourcedRadio.isSelected()) {
+                    newPart = new Outsourced(idIterate,
+                            partName.getText(),
+                            Double.parseDouble(partPrice.getText()),
+                            Integer.parseInt(partInv.getText()),
+                            Integer.parseInt(partMin.getText()),
+                            Integer.parseInt(partMax.getText()),
+                            inOrOutPart.getText()
+                    );
+                } else {
+                    newPart = new InHouse(idIterate,
+                            partName.getText(),
+                            Double.parseDouble(partPrice.getText()),
+                            Integer.parseInt(partInv.getText()),
+                            Integer.parseInt(partMin.getText()),
+                            Integer.parseInt(partMax.getText()),
+                            Integer.parseInt(inOrOutPart.getText())
+                    );
+                }
+
+                // Add to the list
+                Inventory.addPart(newPart);
             } else {
-                newPart = new InHouse(Integer.parseInt(partId.getText()),
-                        partName.getText(),
-                        Double.parseDouble(partPrice.getText()),
-                        Integer.parseInt(partInv.getText()),
-                        Integer.parseInt(partMin.getText()),
-                        Integer.parseInt(partMax.getText()),
-                        Integer.parseInt(inOrOutPart.getText())
-                );
+                // Create the new part
+                if (outSourcedRadio.isSelected()) {
+                    newPart = new Outsourced(Integer.parseInt(partId.getText()),
+                            partName.getText(),
+                            Double.parseDouble(partPrice.getText()),
+                            Integer.parseInt(partInv.getText()),
+                            Integer.parseInt(partMin.getText()),
+                            Integer.parseInt(partMax.getText()),
+                            inOrOutPart.getText()
+                    );
+                } else {
+                    newPart = new InHouse(Integer.parseInt(partId.getText()),
+                            partName.getText(),
+                            Double.parseDouble(partPrice.getText()),
+                            Integer.parseInt(partInv.getText()),
+                            Integer.parseInt(partMin.getText()),
+                            Integer.parseInt(partMax.getText()),
+                            Integer.parseInt(inOrOutPart.getText())
+                    );
+                }
+
+                // Add to the list
+                Inventory.updatePart((Integer.parseInt(partId.getText()) - 1), newPart);
             }
 
-            // Add to the list
-            Inventory.updatePart((Integer.parseInt(partId.getText()) - 1), newPart);
+
+            // Close the stuff
+            Node node = (Node) event.getSource();
+            Stage active = (Stage) node.getScene().getWindow();
+
+            active.close();
         }
-
-
-        // Close the stuff
-        Node node = (Node) event.getSource();
-        Stage active = (Stage) node.getScene().getWindow();
-
-        active.close();
+        else {
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setHeaderText("Value Error!");
+            errorAlert.setContentText("Please verify that Max is greater than Min and Stock is between those.");
+            errorAlert.showAndWait();
+        }
     }
 }

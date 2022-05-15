@@ -45,6 +45,9 @@ public class ProductController implements Initializable {
 
     // Create the addProduct Window
     public static void addProductWindow() throws IOException {
+        // Create the new product
+        globalProduct = new Product(0, "", 0, 0, 0, 0);
+
         FXMLLoader fxmlLoader = new FXMLLoader(Inventory.class.getResource("AddProduct.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 950, 615);
         Stage addPartStage = new Stage();
@@ -59,6 +62,7 @@ public class ProductController implements Initializable {
 
     // Modify the addProduct Window
     public static void modifyProductWindow(Product oldProduct) throws IOException {
+        // assign the globalProduct
         globalProduct = oldProduct;
 
         FXMLLoader fxmlLoader = new FXMLLoader(Inventory.class.getResource("AddProduct.fxml"));
@@ -97,6 +101,10 @@ public class ProductController implements Initializable {
         implementedPartInv.setCellValueFactory(new PropertyValueFactory<>("stock"));
         implementedPartPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
 
+        // Set the error label
+        existingParts.setPlaceholder(new Label("No Parts Found!"));
+        implementedParts.setPlaceholder(new Label("No Parts Found!"));
+
         // Setup upper table
         ObservableList<Part> allParts = Inventory.getAllParts();
 
@@ -129,16 +137,17 @@ public class ProductController implements Initializable {
             });
         });
 
-        // Place the values
-        existingParts.setItems(filteredPart);
-
         // Assign the templist
         try {
-            tempList = globalProduct.getAllAssociatedParts();
+            // fill the temp list iwth the objects
+            tempList.addAll(globalProduct.getAllAssociatedParts());
         }
         catch (Exception e) {
             System.out.println("INFO: Empty globalProduct.");
         }
+
+        // Place the values
+        existingParts.setItems(filteredPart);
 
         // Setup Lower Table
         implementedParts.setItems(tempList);
@@ -168,6 +177,8 @@ public class ProductController implements Initializable {
     // Hide the popup window
     @FXML
     protected void hideWindow(ActionEvent event) {
+        emptyTempList();
+
         Node node = (Node) event.getSource();
         Stage active = (Stage) node.getScene().getWindow();
 
@@ -177,42 +188,40 @@ public class ProductController implements Initializable {
     // Add Part Save Button
     @FXML
     protected void onProductSaveClick(ActionEvent event) {
-        // Declare the variables
-        Product newProduct;
-
-        // Id Iterate
-        idIterate++;
-
         // Make sure the max is bigger than the min and inv is inbetween
         if (Integer.parseInt(productMax.getText()) > Integer.parseInt(productInv.getText()) &&
                 Integer.parseInt(productInv.getText()) > Integer.parseInt(productMin.getText())) {
             // Create the new part
             if (productTitle.getText().equals("Add Product")) {
-                newProduct = new Product(idIterate,
-                        productName.getText(),
-                        Double.parseDouble(productPrice.getText()),
-                        Integer.parseInt(productInv.getText()),
-                        Integer.parseInt(productMin.getText()),
-                        Integer.parseInt(productMax.getText()));
+                // Id Iterate
+                idIterate++;
+
+                globalProduct.setId(idIterate);
+                globalProduct.setName(productName.getText());
+                globalProduct.setPrice(Double.parseDouble(productPrice.getText()));
+                globalProduct.setStock(Integer.parseInt(productInv.getText()));
+                globalProduct.setMin(Integer.parseInt(productMin.getText()));
+                globalProduct.setMax(Integer.parseInt(productMax.getText()));
 
                 // Add to the list
-                Inventory.addProduct(newProduct);
+                Inventory.addProduct(globalProduct);
             } else {
-                newProduct = new Product(Integer.parseInt(productId.getText()),
-                        productName.getText(),
-                        Double.parseDouble(productPrice.getText()),
-                        Integer.parseInt(productInv.getText()),
-                        Integer.parseInt(productMin.getText()),
-                        Integer.parseInt(productMax.getText()));
+                // set the new values
+                globalProduct.setId(Integer.parseInt(productId.getText()));
+                globalProduct.setName(productName.getText());
+                globalProduct.setPrice(Double.parseDouble(productPrice.getText()));
+                globalProduct.setStock(Integer.parseInt(productInv.getText()));
+                globalProduct.setMin(Integer.parseInt(productMin.getText()));
+                globalProduct.setMax(Integer.parseInt(productMax.getText()));
 
                 // Add to the list
-                Inventory.updateProduct((Integer.parseInt(productId.getText()) - 1), newProduct);
+                Inventory.updateProduct((Integer.parseInt(productId.getText()) - 1), globalProduct);
             }
 
-            // add the parts
-            for (int i = 0; i < tempList.size(); i++) {
-                newProduct.addAssociatedPart(tempList.get(i));
-            }
+            //// add the parts
+            //for (int i = 0; i < tempList.size(); i++) {
+            //    newProduct.addAssociatedPart(tempList.get(i));
+            //}
 
             emptyTempList();
 
@@ -238,7 +247,8 @@ public class ProductController implements Initializable {
 
         Part newPart = existingParts.getItems().get(row);
 
-        if (!tempList.contains(newPart)) {
+        if (!globalProduct.getAllAssociatedParts().contains(newPart)) {
+            globalProduct.addAssociatedPart(newPart);
             tempList.add(newPart);
         }
     }
@@ -258,6 +268,7 @@ public class ProductController implements Initializable {
         confirmation.showAndWait();
 
         if (confirmation.getResult().getText().equals("OK")) {
+            globalProduct.deleteAssociatedPart(oldPart);
             tempList.remove(oldPart);
         }
     }

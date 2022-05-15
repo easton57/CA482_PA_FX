@@ -67,6 +67,10 @@ public class Inventory extends Application implements Initializable {
         productInvColumn.setCellValueFactory(new PropertyValueFactory<>("stock"));
         productPriceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
 
+        // Set the error label
+        partsTable.setPlaceholder(new Label("No Parts Found!"));
+        productsTable.setPlaceholder(new Label("No Products Found!"));
+
         // ****************************
         // Set up the part text view
         // ****************************

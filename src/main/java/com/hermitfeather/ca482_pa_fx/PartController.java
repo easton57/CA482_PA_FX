@@ -138,15 +138,16 @@ public class PartController {
         // Declare the variables
         Part newPart;
 
-        // Iterate ID
-        idIterate += 1;
-
         // Make sure the max is bigger than the min and inv is inbetween
         if (Integer.parseInt(partMax.getText()) > Integer.parseInt(partInv.getText()) &&
                 Integer.parseInt(partInv.getText()) > Integer.parseInt(partMin.getText())) {
             // Create the new part
             if (partTitle.getText().equals("Add Part")) {
+                // Iterate ID
+                idIterate += 1;
+
                 if (outSourcedRadio.isSelected()) {
+
                     newPart = new Outsourced(idIterate,
                             partName.getText(),
                             Double.parseDouble(partPrice.getText()),

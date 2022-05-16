@@ -16,6 +16,7 @@ import java.io.IOException;
 
 public class PartController {
     // Additional class Variables
+    private static Part globalPart;
     private static RadioButton inHouseRadio;
     private static RadioButton outSourcedRadio;
     private static Text partText;
@@ -46,6 +47,9 @@ public class PartController {
 
     // Modify the addPart Window
     public static void modifyPartWindow(Part oldPart) throws IOException {
+        // setup the global part
+        globalPart = oldPart;
+
         FXMLLoader fxmlLoader = new FXMLLoader(Inventory.class.getResource("AddPart.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 600, 650);
         Stage modifyPartStage = new Stage();
@@ -170,29 +174,23 @@ public class PartController {
                 // Add to the list
                 Inventory.addPart(newPart);
             } else {
+                // Update the part
+                globalPart.setId(Integer.parseInt(partId.getText()));
+                globalPart.setName(partName.getText());
+                globalPart.setPrice(Double.parseDouble(partPrice.getText()));
+                globalPart.setStock(Integer.parseInt(partInv.getText()));
+                globalPart.setMin(Integer.parseInt(partMin.getText()));
+                globalPart.setMax(Integer.parseInt(partMax.getText()));
+
                 // Create the new part
                 if (outSourcedRadio.isSelected()) {
-                    newPart = new Outsourced(Integer.parseInt(partId.getText()),
-                            partName.getText(),
-                            Double.parseDouble(partPrice.getText()),
-                            Integer.parseInt(partInv.getText()),
-                            Integer.parseInt(partMin.getText()),
-                            Integer.parseInt(partMax.getText()),
-                            inOrOutPart.getText()
-                    );
+                    ((Outsourced) globalPart).setCompanyName(inOrOutPart.getText());
                 } else {
-                    newPart = new InHouse(Integer.parseInt(partId.getText()),
-                            partName.getText(),
-                            Double.parseDouble(partPrice.getText()),
-                            Integer.parseInt(partInv.getText()),
-                            Integer.parseInt(partMin.getText()),
-                            Integer.parseInt(partMax.getText()),
-                            Integer.parseInt(inOrOutPart.getText())
-                    );
+                    ((InHouse) globalPart).setMachineId(Integer.parseInt(inOrOutPart.getText()));
                 }
 
                 // Add to the list
-                Inventory.updatePart((Integer.parseInt(partId.getText()) - 1), newPart);
+                Inventory.updatePart((Integer.parseInt(partId.getText()) - 1), globalPart);
             }
 
 

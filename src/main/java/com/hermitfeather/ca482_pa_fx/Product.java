@@ -9,6 +9,9 @@ package com.hermitfeather.ca482_pa_fx;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+/**
+ * Class for the product objects
+ */
 public class Product {
     // variables
     private ObservableList<Part> associatedParts = FXCollections.observableArrayList();
@@ -19,6 +22,15 @@ public class Product {
     private int min;
     private int max;
 
+    /**
+     * Constructor for the product objects
+     * @param id id for the product
+     * @param name name for the product that's created
+     * @param price price of the product
+     * @param stock stock of the product
+     * @param min min of the product object
+     * @param max max of the product object
+     */
     public Product(int id, String name, double price, int stock, int min, int max) {
         this.id = id;
         this.name = name;

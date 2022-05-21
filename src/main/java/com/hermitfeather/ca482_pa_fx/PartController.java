@@ -19,6 +19,9 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+/**
+ * Class for the new and modify part windows and their functions
+ */
 public class PartController {
     // Additional class Variables
     private static RadioButton inHouseRadio;
@@ -36,6 +39,7 @@ public class PartController {
 
     /**
      * Method for opening and customizing the part window
+     * @throws IOException for gui
      */
     public static void addPartWindow() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Inventory.class.getResource("AddPart.fxml"));
@@ -54,6 +58,7 @@ public class PartController {
     /**
      * Method for opening and customizing the modify part window
      * @param oldPart is used for filling the existing information
+     * @throws IOException for gui
      */
     public static void modifyPartWindow(Part oldPart) throws IOException {
         // setup the global part
@@ -142,6 +147,7 @@ public class PartController {
 
     /**
      * Method to close the window without modifying any parts
+     * @param event used to close the window
      */
     @FXML
     protected void hideWindow(ActionEvent event) {
@@ -153,6 +159,7 @@ public class PartController {
 
     /**
      * Method to add or modify part objects in the window
+     * @param event used to close the window after other tasks are executed
      */
     @FXML
     protected void onPartSaveClick(ActionEvent event) {

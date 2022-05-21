@@ -24,6 +24,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * Product window GUI and functions
+ */
 public class ProductController implements Initializable {
     // Class variables
     private static Product globalProduct;
@@ -51,6 +54,7 @@ public class ProductController implements Initializable {
 
     /**
      * Method for opening and customizing the add product window
+     * @throws IOException for the gui
      */
     public static void addProductWindow() throws IOException {
         // Create the new product
@@ -70,6 +74,8 @@ public class ProductController implements Initializable {
 
     /**
      * Method for opening and customizing the modify product window
+     * @param oldProduct the product to modify
+     * @throws IOException for the gui
      */
     public static void modifyProductWindow(Product oldProduct) throws IOException {
         // assign the globalProduct
@@ -194,6 +200,7 @@ public class ProductController implements Initializable {
 
     /**
      * Method to close the window without modifying any products
+     * @param event event variable to control the window
      */
     @FXML
     protected void hideWindow(ActionEvent event) {
@@ -207,6 +214,7 @@ public class ProductController implements Initializable {
 
     /**
      * Method to save new products or update existing products when the save button is clicked
+     * @param event parameter to control and close the window
      */
     @FXML
     protected void onProductSaveClick(ActionEvent event) {

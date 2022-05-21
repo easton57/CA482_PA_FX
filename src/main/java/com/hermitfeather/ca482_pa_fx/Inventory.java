@@ -1,5 +1,6 @@
 /**
  * Main file and driver for the program
+ * Java docs located at the root of the project files in a folder called javadocs
  *
  * @author Easton Seidel
  */
@@ -26,6 +27,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * Main class file for the inventory program
+ */
 public class Inventory extends Application implements Initializable {
     // Define Class Vars
     private static ObservableList<Part> allParts = FXCollections.observableArrayList();
@@ -95,6 +99,7 @@ public class Inventory extends Application implements Initializable {
 
     /**
      * method to add the part to the appropriate arrays
+     * @param newPart newPart to add to global variables
      */
     public static void addPart(Part newPart) {
         // Add logic for inhouse and outsourced
@@ -104,6 +109,7 @@ public class Inventory extends Application implements Initializable {
 
     /**
      * method to add the product to the appropriate arrays
+     * @param newProduct product object to add to allproducts
      */
     public static void addProduct(Product newProduct) {
         allProducts.add(newProduct);
@@ -112,6 +118,8 @@ public class Inventory extends Application implements Initializable {
 
     /**
      * method to find a part based on it's ID
+     * @param partId used to find the part in the array
+     * @return returns parts that match that id.
      */
     public static Part lookupPart(int partId) {
         for (int i = 0; i < allParts.size(); i++) {
@@ -125,6 +133,8 @@ public class Inventory extends Application implements Initializable {
 
     /**
      * method to find a part based on it's name
+     * @param partName used to find any part that resembles the string
+     * @return returns parts that contain that string
      */
     public static ObservableList<Part> lookupPart(String partName) {
         ObservableList<Part> filteredList = FXCollections.observableArrayList();
@@ -141,6 +151,8 @@ public class Inventory extends Application implements Initializable {
 
     /**
      * method to find a product based on it's ID
+     * @param productId used to find the product in the array
+     * @return returns product that match that id.
      */
     public static Product lookupProduct(int productId) {
         for (int i = 0; i < allProducts.size(); i++) {
@@ -154,6 +166,8 @@ public class Inventory extends Application implements Initializable {
 
     /**
      * method to find a product based on it's name
+     * @param productName used to find any product that resembles the string
+     * @return returns products that contain that string
      */
     public static ObservableList<Product> lookupProduct(String productName) {
         ObservableList<Product> filteredList = FXCollections.observableArrayList();
@@ -170,6 +184,8 @@ public class Inventory extends Application implements Initializable {
 
     /**
      * Updates a part based on it's ID and a newly generated part object
+     * @param index used to identify which object to update
+     * @param selectedPart the object that is replacing the old part
      */
     public static void updatePart(int index, Part selectedPart) {
         for (int i = 0; i < allParts.size(); i++) {
@@ -183,6 +199,8 @@ public class Inventory extends Application implements Initializable {
 
     /**
      * Updates a product based on it's ID and a newly generated product object
+     * @param index used to identify which object to update
+     * @param newProduct the object that is replacing the old product
      */
     public static void updateProduct(int index, Product newProduct) {
         for (int i = 0; i < allProducts.size(); i++) {
@@ -199,6 +217,8 @@ public class Inventory extends Application implements Initializable {
 
     /**
      * Removes a part from all arrays
+     * @param selectedPart the object to delete
+     * @return returns bool to indicate if the part was deleted
      */
     public static boolean deletePart(Part selectedPart) {
         if (allParts.contains(selectedPart)) {
@@ -217,6 +237,8 @@ public class Inventory extends Application implements Initializable {
 
     /**
      * Removes a product from all arrays
+     * @param selectedProduct object to delete
+     * @return returns bool to indicate if product is deleted or not
      */
     public static boolean deleteProduct(Product selectedProduct) {
         if (allProducts.contains(selectedProduct)) {
@@ -234,14 +256,14 @@ public class Inventory extends Application implements Initializable {
     }
 
     /**
-     * Returns all valid parts
+     * @return returns all valid parts
      */
     public static ObservableList<Part> getAllParts() {
         return filteredPart;
     }
 
     /**
-     * Returns all valid products
+     * @return returns all valid products
      */
     public static ObservableList<Product> getAllProducts() {
         return filteredProduct;
@@ -279,6 +301,7 @@ public class Inventory extends Application implements Initializable {
 
     /**
      * Opens the add part window
+     * @throws IOException for the gui window
      */
     @FXML
     protected void onAddPartClick() throws IOException {
@@ -342,6 +365,7 @@ public class Inventory extends Application implements Initializable {
 
     /**
      * Opens the add product window
+     * @throws IOException for the gui window
      */
     @FXML
     protected void onAddProductClick() throws IOException {

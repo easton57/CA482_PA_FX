@@ -3,9 +3,7 @@
  * Java docs located at the root of the project files in a folder called javadocs
  *
  * @author Easton Seidel
- */
-
-/**
+ *
  * FUTURE ENHANCEMENT
  * Save the data to a csv or other data file to have persistent data between launches.
  */

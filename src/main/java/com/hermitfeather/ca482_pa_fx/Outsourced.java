@@ -1,3 +1,8 @@
+/**
+ * Outsourced child class to Part
+ *
+ * @author Easton Seidel
+ */
 package com.hermitfeather.ca482_pa_fx;
 
 public class Outsourced extends Part{
@@ -9,10 +14,16 @@ public class Outsourced extends Part{
         this.companyName = companyName;
     }
 
+    /**
+     * @param companyName sets the company name
+     */
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
     }
 
+    /**
+     * @return the company name
+     */
     public String getCompanyName() {
         return companyName;
     }

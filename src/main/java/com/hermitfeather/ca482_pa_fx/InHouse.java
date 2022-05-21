@@ -1,3 +1,8 @@
+/**
+ * Cute little child class to Part
+ * @author Easton Seidel
+ */
+
 package com.hermitfeather.ca482_pa_fx;
 
 public class InHouse extends Part {
@@ -9,10 +14,16 @@ public class InHouse extends Part {
         this.machineId = machineId;
     }
 
+    /**
+     * @param machineId the machineId to set
+     */
     public void setMachineId(int machineId) {
         this.machineId = machineId;
     }
 
+    /**
+     * @return the machineId
+     */
     public int getMachineId() {
         return machineId;
     }

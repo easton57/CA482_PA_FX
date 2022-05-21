@@ -1,20 +1,26 @@
+/**
+ * Main file and driver for the program
+ *
+ * @author Easton Seidel
+ */
+
+/**
+ * FUTURE ENHANCEMENT
+ * Save the data to a csv or other data file to have persistent data between launches.
+ */
+
 package com.hermitfeather.ca482_pa_fx;
 
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
@@ -24,9 +30,10 @@ public class Inventory extends Application implements Initializable {
     // Define Class Vars
     private static ObservableList<Part> allParts = FXCollections.observableArrayList();
     private static ObservableList<Product> allProducts = FXCollections.observableArrayList();
+    private static ObservableList<Part> filteredPart = FXCollections.observableArrayList();
+    private static ObservableList<Product> filteredProduct = FXCollections.observableArrayList();
 
     // Main window variables
-    @FXML private Button addProductButton;
     @FXML private TextField searchPart;
     @FXML private TextField searchProduct;
     @FXML private TableView<Part> partsTable;
@@ -40,8 +47,9 @@ public class Inventory extends Application implements Initializable {
     @FXML private TableColumn<Product, Integer> productInvColumn;
     @FXML private TableColumn<Product, Double> productPriceColumn;
 
-    // Window functions
-    // Main window function
+    /**
+     * start method to initialize the window and run the program.
+     */
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Inventory.class.getResource("MainForm.fxml"));
@@ -54,6 +62,9 @@ public class Inventory extends Application implements Initializable {
         stage.show();
     }
 
+    /**
+     * overridden initialize method to initialize additional variables that are in the xml file and set up the table data.
+     */
     @Override
     public void initialize(URL Location, ResourceBundle resources) {
         // Set up the table cell's
@@ -72,154 +83,239 @@ public class Inventory extends Application implements Initializable {
         productsTable.setPlaceholder(new Label("No Products Found!"));
 
         // ****************************
-        // Set up the part text view
+        // Set up the part table view
         // ****************************
-        FilteredList<Part> filteredPart = new FilteredList<>(allParts, p -> true);
-
-        searchPart.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredPart.setPredicate(part -> {
-                // Keep the results the same if empty
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
-
-                // compare part ID or part Name
-                String lowerCaseFilter = newValue.toLowerCase();
-
-                if (part.getName().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-                else {
-                    try {
-                        if (part.getId() == Integer.parseInt(newValue)) {
-                            return true;
-                        }
-                    }
-                    catch (NumberFormatException e) {
-                        return false;
-                    }
-                }
-                return false;
-            });
-        });
-
-        // Place the values
         partsTable.setItems(filteredPart);
 
         // ****************************
-        // Set up the product text view
+        // Set up the product table view
         // ****************************
-        FilteredList<Product> filteredProduct = new FilteredList<>(allProducts, p -> true);
-
-        searchProduct.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredProduct.setPredicate(product -> {
-                // Keep the results the same if empty
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
-
-                // compare part ID or part Name
-                String lowerCaseFilter = newValue.toLowerCase();
-
-                if (product.getName().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-                else {
-                    try {
-                        if (product.getId() == Integer.parseInt(newValue)) {
-                            return true;
-                        }
-                    }
-                    catch (NumberFormatException e) {
-                        return false;
-                    }
-                }
-                return false;
-            });
-        });
-
-        // Place the values
         productsTable.setItems(filteredProduct);
     }
 
-    // Specified in UML
+    /**
+     * method to add the part to the appropriate arrays
+     */
     public static void addPart(Part newPart) {
         // Add logic for inhouse and outsourced
+        filteredPart.add(newPart);
         allParts.add(newPart);
     }
 
+    /**
+     * method to add the product to the appropriate arrays
+     */
     public static void addProduct(Product newProduct) {
         allProducts.add(newProduct);
+        filteredProduct.add(newProduct);
     }
 
+    /**
+     * method to find a part based on it's ID
+     */
     public static Part lookupPart(int partId) {
-        return allParts.get(partId);
+        for (int i = 0; i < allParts.size(); i++) {
+            if ((allParts.get(i) != null) && (allParts.get(i).getId() == partId)) {
+                return allParts.get(i);
+            }
+        }
+
+        return null;
     }
 
-    //public static ObservableList<Part> lookupPart(String partName) {
-    //
-    //}
+    /**
+     * method to find a part based on it's name
+     */
+    public static ObservableList<Part> lookupPart(String partName) {
+        ObservableList<Part> filteredList = FXCollections.observableArrayList();
 
+        // Check each item and filter the list
+        for (int i = 1; i <= allParts.size(); i++) {
+            if ((lookupPart(i) != null) && ((lookupPart(i).getName().contains(partName)))) {
+                filteredList.add(lookupPart(i));
+            }
+        }
+
+        return filteredList;
+    }
+
+    /**
+     * method to find a product based on it's ID
+     */
     public static Product lookupProduct(int productId) {
-        return allProducts.get(productId);
+        for (int i = 0; i < allProducts.size(); i++) {
+            if ((allProducts.get(i) != null) && (allProducts.get(i).getId() == productId)) {
+                return allProducts.get(i);
+            }
+        }
+
+        return null;
     }
 
-    //public static ObservableList<Product> lookupProduct(String productName) {
-    //
-    //}
+    /**
+     * method to find a product based on it's name
+     */
+    public static ObservableList<Product> lookupProduct(String productName) {
+        ObservableList<Product> filteredList = FXCollections.observableArrayList();
 
+        // Check each item and filter the list
+        for (int i = 0; i <= allProducts.size(); i++) {
+            if ((lookupProduct(i) != null) && (lookupProduct(i).getName().contains(productName))) {
+                filteredList.add(lookupProduct(i));
+            }
+        }
+
+        return filteredList;
+    }
+
+    /**
+     * Updates a part based on it's ID and a newly generated part object
+     */
     public static void updatePart(int index, Part selectedPart) {
-        allParts.set(index, selectedPart);
+        for (int i = 0; i < allParts.size(); i++) {
+            if ((allParts.get(i) != null) && (allParts.get(i).getId() == index)) {
+                allParts.set(i, selectedPart);
+            }
+        }
+
+        resetFilteredPart();
     }
 
+    /**
+     * Updates a product based on it's ID and a newly generated product object
+     */
     public static void updateProduct(int index, Product newProduct) {
-        allProducts.set(index, newProduct);
+        for (int i = 0; i < allProducts.size(); i++) {
+            if ((allProducts.get(i) != null) && (allProducts.get(i).getId() == index)) {
+                allProducts.set(i, newProduct);
+            }
+        }
+        for (int i = 0; i < filteredProduct.size(); i++) {
+            if ((filteredProduct.get(i) != null) && (filteredProduct.get(i).getId() == index)) {
+                filteredProduct.set(i, newProduct);
+            }
+        }
     }
 
+    /**
+     * Removes a part from all arrays
+     */
     public static boolean deletePart(Part selectedPart) {
         if (allParts.contains(selectedPart)) {
-            allParts.remove(selectedPart);
+            for (int i = 0; i < allParts.size(); i++) {
+                if ((allParts.get(i) != null) && (allParts.get(i).getId() == selectedPart.getId())) {
+                    allParts.set(i, null);
+                }
+            }
+
+            resetFilteredPart();
+
             return true;
         }
         return false;
     }
 
+    /**
+     * Removes a product from all arrays
+     */
     public static boolean deleteProduct(Product selectedProduct) {
         if (allProducts.contains(selectedProduct)) {
-            allProducts.remove(selectedProduct);
+            for (int i = 0; i < allProducts.size(); i++) {
+                if ((allProducts.get(i) != null) && (allProducts.get(i).getId() == selectedProduct.getId())) {
+                    allProducts.set(i, null);
+                }
+            }
+
+            resetFilteredProduct();
+
             return true;
         }
         return false;
     }
 
+    /**
+     * Returns all valid parts
+     */
     public static ObservableList<Part> getAllParts() {
-        return allParts;
+        return filteredPart;
     }
 
+    /**
+     * Returns all valid products
+     */
     public static ObservableList<Product> getAllProducts() {
-        return allProducts;
+        return filteredProduct;
     }
 
-    public static void main(String args[]){
-        launch(args);
+    /**
+     * refreshes the temporary part list in the table
+     */
+    public static void resetFilteredPart() {
+        while (!filteredPart.isEmpty()) {
+            filteredPart.remove(0);
+        }
+
+        for (int i = 0; i < allParts.size(); i++) {
+            if (allParts.get(i) != null) {
+                filteredPart.add(allParts.get(i));
+            }
+        }
     }
 
-    // Part Pane Buttons
+    /**
+     * refreshes the temporary product list in the table
+     */
+    public static void resetFilteredProduct() {
+        while (!filteredProduct.isEmpty()) {
+            filteredProduct.remove(0);
+        }
+
+        for (int i = 0; i < allProducts.size(); i++) {
+            if (allProducts.get(i) != null) {
+                filteredProduct.add(allProducts.get(i));
+            }
+        }
+    }
+
+    /**
+     * Opens the add part window
+     */
     @FXML
-    protected void onAddPartClick() throws IOException { PartController.addPartWindow(); }
-
-    @FXML
-    protected void onModifyPartClick() throws IOException {
-        TablePosition pos = partsTable.getSelectionModel().getSelectedCells().get(0);
-        int row = pos.getRow();
-
-        Part oldPart = partsTable.getItems().get(row);
-
-        PartController.modifyPartWindow(oldPart);
+    protected void onAddPartClick() throws IOException {
+        PartController.addPartWindow();
     }
 
+    /**
+     * Opens the modify part window
+     */
+    @FXML
+    protected void onModifyPartClick() {
+        try {
+            TablePosition pos = partsTable.getSelectionModel().getSelectedCells().get(0);
+            int row = pos.getRow();
+
+            Part oldPart = partsTable.getItems().get(row);
+
+            PartController.modifyPartWindow(oldPart);
+        }
+        catch (Exception e) {
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setHeaderText("Error Modifying Part!");
+            errorAlert.setContentText("The Part couldn't be modified or the table is empty!");
+            errorAlert.showAndWait();
+        }
+    }
+
+    /**
+     * Deletes the selected part from the table
+     */
     @FXML
     protected void onDeletePartClick() {
+        /**
+         * RUNTIME ERROR
+         * Gracefully handle hitting the delete button without a part selected or with an empty table.
+         * The same was done with the product table and its delete button.
+         */
         try {
             TablePosition pos = partsTable.getSelectionModel().getSelectedCells().get(0);
             int row = pos.getRow();
@@ -244,12 +340,20 @@ public class Inventory extends Application implements Initializable {
         }
     };
 
-    // Product Pane Buttons
+    /**
+     * Opens the add product window
+     */
     @FXML
-    protected void onAddProductClick() throws IOException { ProductController.addProductWindow(); }
+    protected void onAddProductClick() throws IOException {
+        ProductController.addProductWindow();
+    }
 
+    /**
+     * Opens the modify product window
+     */
     @FXML
-    protected void onModifyProductClick() throws IOException {
+    protected void onModifyProductClick() {
+
         try {
             TablePosition pos = productsTable.getSelectionModel().getSelectedCells().get(0);
             int row = pos.getRow();
@@ -266,6 +370,9 @@ public class Inventory extends Application implements Initializable {
         }
     }
 
+    /**
+     * Deletes the selected product from the table
+     */
     @FXML
     protected void onDeleteProductClick() {
         try {
@@ -300,10 +407,72 @@ public class Inventory extends Application implements Initializable {
         }
     };
 
-    // Close if exiting
+    /**
+     * Closes the program
+     */
     @FXML
     protected void onExitButtonClick() {
         Platform.exit();
+    }
+
+    /**
+     * Method to search for parts in the parts table
+     */
+    @FXML
+    protected void onPartSearch() {
+        String searchText = searchPart.getText();
+
+        while (!filteredPart.isEmpty()) {
+            filteredPart.remove(0);
+        }
+
+        // Check to see if it's a number
+        try {
+            Part returnedPart = lookupPart(Integer.parseInt(searchText));
+
+            if (returnedPart != null) {
+                filteredPart.add(returnedPart);
+            }
+        }
+        catch (Exception e) {
+            // Check for text or add part
+            if (searchText.isEmpty()) {
+                resetFilteredPart();
+            }
+            else {
+                filteredPart.addAll(lookupPart(searchText));
+            }
+        }
+    }
+
+    /**
+     * Method to search for products in the products table
+     */
+    @FXML
+    protected void onProductSearch() {
+        String searchText = searchProduct.getText();
+
+        while (!filteredProduct.isEmpty()) {
+            filteredProduct.remove(0);
+        }
+
+        // Check to see if it's a number
+        try {
+            Product returnedProduct = lookupProduct(Integer.parseInt(searchText));
+
+            if (returnedProduct != null) {
+                filteredProduct.add(returnedProduct);
+            }
+        }
+        catch (Exception e) {
+            // Check for text or add part
+            if (searchText.isEmpty()) {
+                resetFilteredProduct();
+            }
+            else {
+                filteredProduct.addAll(lookupProduct(searchText));
+            }
+        }
     }
 }
 

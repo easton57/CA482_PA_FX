@@ -1,6 +1,11 @@
+/**
+ * Class file and controller for the product window
+ *
+ * @author Easton Seidel
+ */
+
 package com.hermitfeather.ca482_pa_fx;
 
-import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -31,6 +36,7 @@ public class ProductController implements Initializable {
     private static TextField productMax;
     private static TextField productMin;
     private static ObservableList<Part> tempList = FXCollections.observableArrayList();
+
     @FXML private TextField productSearch;
     @FXML private TableView<Part> existingParts;
     @FXML private TableView<Part> implementedParts;
@@ -43,7 +49,9 @@ public class ProductController implements Initializable {
     @FXML private TableColumn<Part, Integer> implementedPartInv;
     @FXML private TableColumn<Part, Double> implementedPartPrice;
 
-    // Create the addProduct Window
+    /**
+     * Method for opening and customizing the add product window
+     */
     public static void addProductWindow() throws IOException {
         // Create the new product
         globalProduct = new Product(0, "", 0, 0, 0, 0);
@@ -60,7 +68,9 @@ public class ProductController implements Initializable {
         addPartStage.show();
     }
 
-    // Modify the addProduct Window
+    /**
+     * Method for opening and customizing the modify product window
+     */
     public static void modifyProductWindow(Product oldProduct) throws IOException {
         // assign the globalProduct
         globalProduct = oldProduct;
@@ -89,6 +99,9 @@ public class ProductController implements Initializable {
         modifyPartStage.show();
     }
 
+    /**
+     * Initialization method for additional variables and objects in the xml file
+     */
     @Override
     public void initialize(URL Location, ResourceBundle resources) {
         existingPartId.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -153,7 +166,9 @@ public class ProductController implements Initializable {
         implementedParts.setItems(tempList);
     }
 
-    // Make the values on the page modifiable
+    /**
+     * @param scene to pull objects from the xml
+     */
     private static void pageElements(Scene scene) {
         // setup the input fields
         productId = (TextField) scene.lookup("#productId");
@@ -167,6 +182,9 @@ public class ProductController implements Initializable {
         productTitle = (Text) scene.lookup("#productTitle");
     }
 
+    /**
+     * Empty's the temporary list of parts
+     */
     private static void emptyTempList() {
         // Empty the list
         while (!tempList.isEmpty()) {
@@ -174,7 +192,9 @@ public class ProductController implements Initializable {
         }
     }
 
-    // Hide the popup window
+    /**
+     * Method to close the window without modifying any products
+     */
     @FXML
     protected void hideWindow(ActionEvent event) {
         emptyTempList();
@@ -185,7 +205,9 @@ public class ProductController implements Initializable {
         active.close();
     }
 
-    // Add Part Save Button
+    /**
+     * Method to save new products or update existing products when the save button is clicked
+     */
     @FXML
     protected void onProductSaveClick(ActionEvent event) {
         // Make sure the max is bigger than the min and inv is inbetween
@@ -215,13 +237,8 @@ public class ProductController implements Initializable {
                 globalProduct.setMax(Integer.parseInt(productMax.getText()));
 
                 // Add to the list
-                Inventory.updateProduct((Integer.parseInt(productId.getText()) - 1), globalProduct);
+                Inventory.updateProduct((Integer.parseInt(productId.getText())), globalProduct);
             }
-
-            //// add the parts
-            //for (int i = 0; i < tempList.size(); i++) {
-            //    newProduct.addAssociatedPart(tempList.get(i));
-            //}
 
             emptyTempList();
 
@@ -239,7 +256,9 @@ public class ProductController implements Initializable {
         }
     }
 
-    // Add Part button
+    /**
+     * Method to add parts to the products parts list and array
+     */
     @FXML
     protected void onPartAddButtonClick() {
         TablePosition pos = existingParts.getSelectionModel().getSelectedCells().get(0);
@@ -253,7 +272,9 @@ public class ProductController implements Initializable {
         }
     }
 
-    // Remove Part
+    /**
+     * Method to remove parts from a products parts list and array
+     */
     @FXML
     protected void onRemovePartButtonClick() {
         TablePosition pos = implementedParts.getSelectionModel().getSelectedCells().get(0);

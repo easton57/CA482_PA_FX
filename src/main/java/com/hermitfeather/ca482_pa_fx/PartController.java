@@ -1,6 +1,11 @@
+/**
+ * Class file and controller for the part window
+ *
+ * @author Easton Seidel
+ */
+
 package com.hermitfeather.ca482_pa_fx;
 
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -16,7 +21,6 @@ import java.io.IOException;
 
 public class PartController {
     // Additional class Variables
-    private static Part globalPart;
     private static RadioButton inHouseRadio;
     private static RadioButton outSourcedRadio;
     private static Text partText;
@@ -30,7 +34,9 @@ public class PartController {
     private static TextField inOrOutPart;
     private static int idIterate = 0;
 
-    // Create the addPart Window
+    /**
+     * Method for opening and customizing the part window
+     */
     public static void addPartWindow() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Inventory.class.getResource("AddPart.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 600, 650);
@@ -45,11 +51,12 @@ public class PartController {
         addPartStage.show();
     }
 
-    // Modify the addPart Window
+    /**
+     * Method for opening and customizing the modify part window
+     * @param oldPart is used for filling the existing information
+     */
     public static void modifyPartWindow(Part oldPart) throws IOException {
         // setup the global part
-        globalPart = oldPart;
-
         FXMLLoader fxmlLoader = new FXMLLoader(Inventory.class.getResource("AddPart.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 600, 650);
         Stage modifyPartStage = new Stage();
@@ -83,7 +90,10 @@ public class PartController {
         modifyPartStage.show();
     }
 
-    // Make the values on the page modifiable
+    /**
+     * Grab the elements from the XML
+     * @param scene used to pull data from the existing scene
+     */
     private static void pageElements(Scene scene) {
         // setup the input fields
         partId = (TextField) scene.lookup("#partId");
@@ -101,7 +111,10 @@ public class PartController {
         radioToggle(scene);
     }
 
-    // Set Radio button actions
+    /**
+     * Method to create the radio buttons and add the listener
+     * @param scene used to grab and set the values from the XML
+     */
     private static void radioToggle(Scene scene) {
         // Pull the buttons from the scene and FXML
         ToggleGroup tg = new ToggleGroup();
@@ -127,7 +140,9 @@ public class PartController {
         });
     }
 
-    // Hide the popup window
+    /**
+     * Method to close the window without modifying any parts
+     */
     @FXML
     protected void hideWindow(ActionEvent event) {
         Node node = (Node) event.getSource();
@@ -136,7 +151,9 @@ public class PartController {
         active.close();
     }
 
-    // Add Part Save Button
+    /**
+     * Method to add or modify part objects in the window
+     */
     @FXML
     protected void onPartSaveClick(ActionEvent event) {
         // Declare the variables
@@ -148,7 +165,7 @@ public class PartController {
             // Create the new part
             if (partTitle.getText().equals("Add Part")) {
                 // Iterate ID
-                idIterate += 1;
+                idIterate++;
 
                 if (outSourcedRadio.isSelected()) {
 
@@ -175,22 +192,29 @@ public class PartController {
                 Inventory.addPart(newPart);
             } else {
                 // Update the part
-                globalPart.setId(Integer.parseInt(partId.getText()));
-                globalPart.setName(partName.getText());
-                globalPart.setPrice(Double.parseDouble(partPrice.getText()));
-                globalPart.setStock(Integer.parseInt(partInv.getText()));
-                globalPart.setMin(Integer.parseInt(partMin.getText()));
-                globalPart.setMax(Integer.parseInt(partMax.getText()));
-
-                // Create the new part
                 if (outSourcedRadio.isSelected()) {
-                    ((Outsourced) globalPart).setCompanyName(inOrOutPart.getText());
+
+                    newPart = new Outsourced(Integer.parseInt(partId.getText()),
+                            partName.getText(),
+                            Double.parseDouble(partPrice.getText()),
+                            Integer.parseInt(partInv.getText()),
+                            Integer.parseInt(partMin.getText()),
+                            Integer.parseInt(partMax.getText()),
+                            inOrOutPart.getText()
+                    );
                 } else {
-                    ((InHouse) globalPart).setMachineId(Integer.parseInt(inOrOutPart.getText()));
+                    newPart = new InHouse(Integer.parseInt(partId.getText()),
+                            partName.getText(),
+                            Double.parseDouble(partPrice.getText()),
+                            Integer.parseInt(partInv.getText()),
+                            Integer.parseInt(partMin.getText()),
+                            Integer.parseInt(partMax.getText()),
+                            Integer.parseInt(inOrOutPart.getText())
+                    );
                 }
 
                 // Add to the list
-                Inventory.updatePart((Integer.parseInt(partId.getText()) - 1), globalPart);
+                Inventory.updatePart((Integer.parseInt(partId.getText())), newPart);
             }
 
 

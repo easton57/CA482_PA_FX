@@ -218,9 +218,50 @@ public class ProductController implements Initializable {
      */
     @FXML
     protected void onProductSaveClick(ActionEvent event) {
+        // Make sure Inv is an Int
+        try {
+            Integer.parseInt(productInv.getText());
+        } catch(NumberFormatException n) {
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setHeaderText("Value Error!");
+            errorAlert.setContentText("Please verify that your Inv value is a number.");
+            errorAlert.showAndWait();
+            return;
+        }
+
+        // Check max and min
+        try {
+            Integer.parseInt(productMax.getText());
+            Integer.parseInt(productMin.getText());
+        } catch(NumberFormatException n) {
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setHeaderText("Value Error!");
+            errorAlert.setContentText("Please verify that your Min and Max values are numbers.");
+            errorAlert.showAndWait();
+            return;
+        }
+
+        // Check the price
+        try {
+            Double.parseDouble(productPrice.getText());
+        } catch(NumberFormatException n) {
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setHeaderText("Value Error!");
+            errorAlert.setContentText("Please verify that your Price value is a number.");
+            errorAlert.showAndWait();
+            return;
+        }
+
         // Make sure the max is bigger than the min and inv is inbetween
-        if (Integer.parseInt(productMax.getText()) > Integer.parseInt(productInv.getText()) &&
-                Integer.parseInt(productInv.getText()) > Integer.parseInt(productMin.getText())) {
+        if (!(Integer.parseInt(productMax.getText()) > Integer.parseInt(productInv.getText()) &&
+                Integer.parseInt(productInv.getText()) > Integer.parseInt(productMin.getText()))) {
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setHeaderText("Value Error!");
+            errorAlert.setContentText("Please verify that Max is greater than Min and Stock is between those.");
+            errorAlert.showAndWait();
+
+        }
+        else {
             // Create the new part
             if (productTitle.getText().equals("Add Product")) {
                 // Id Iterate
@@ -255,12 +296,6 @@ public class ProductController implements Initializable {
             Stage active = (Stage) node.getScene().getWindow();
 
             active.close();
-        }
-        else {
-            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-            errorAlert.setHeaderText("Value Error!");
-            errorAlert.setContentText("Please verify that Max is greater than Min and Stock is between those.");
-            errorAlert.showAndWait();
         }
     }
 

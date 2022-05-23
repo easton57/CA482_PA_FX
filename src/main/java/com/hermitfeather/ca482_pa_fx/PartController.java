@@ -166,9 +166,62 @@ public class PartController {
         // Declare the variables
         Part newPart;
 
-        // Make sure the max is bigger than the min and inv is inbetween
-        if (Integer.parseInt(partMax.getText()) > Integer.parseInt(partInv.getText()) &&
-                Integer.parseInt(partInv.getText()) > Integer.parseInt(partMin.getText())) {
+        // Check the Machine ID to make sure it's an Int
+        if (inHouseRadio.isSelected()) {
+            try {
+                Integer.parseInt(inOrOutPart.getText());
+            } catch (Exception e) {
+                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                errorAlert.setHeaderText("Value Error!");
+                errorAlert.setContentText("Please verify that your Machine ID is a number.");
+                errorAlert.showAndWait();
+                return;
+            }
+        }
+
+        // Make sure Inv is an Int
+        try {
+            Integer.parseInt(partInv.getText());
+        } catch(NumberFormatException n) {
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setHeaderText("Value Error!");
+            errorAlert.setContentText("Please verify that your Inv value is a number.");
+            errorAlert.showAndWait();
+            return;
+        }
+
+        // Check max and min
+        try {
+            Integer.parseInt(partMax.getText());
+            Integer.parseInt(partMin.getText());
+        } catch(NumberFormatException n) {
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setHeaderText("Value Error!");
+            errorAlert.setContentText("Please verify that your Min and Max values are numbers.");
+            errorAlert.showAndWait();
+            return;
+        }
+
+        // Check the price
+        try {
+            Double.parseDouble(partPrice.getText());
+        } catch(NumberFormatException n) {
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setHeaderText("Value Error!");
+            errorAlert.setContentText("Please verify that your Price value is a number.");
+            errorAlert.showAndWait();
+            return;
+        }
+
+        // Make sure the values match the specified parameters
+        if (!(Integer.parseInt(partMax.getText()) > Integer.parseInt(partInv.getText()) &&
+                Integer.parseInt(partInv.getText()) > Integer.parseInt(partMin.getText()))) { // Make sure the max is bigger than the min and inv is inbetween
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setHeaderText("Value Error!");
+            errorAlert.setContentText("Please verify that Max is greater than Min and Stock is between those.");
+            errorAlert.showAndWait();
+        }
+        else {
             // Create the new part
             if (partTitle.getText().equals("Add Part")) {
                 // Iterate ID
@@ -224,18 +277,11 @@ public class PartController {
                 Inventory.updatePart((Integer.parseInt(partId.getText())), newPart);
             }
 
-
             // Close the stuff
             Node node = (Node) event.getSource();
             Stage active = (Stage) node.getScene().getWindow();
 
             active.close();
-        }
-        else {
-            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-            errorAlert.setHeaderText("Value Error!");
-            errorAlert.setContentText("Please verify that Max is greater than Min and Stock is between those.");
-            errorAlert.showAndWait();
         }
     }
 }
